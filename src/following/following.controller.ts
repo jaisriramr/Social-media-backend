@@ -9,22 +9,22 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { FollowerService } from './followers.service';
+import { FollowingService } from './following.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateFollower } from './dto/followers.create.dto';
+import { CreateFollowing } from './dto/createFollowingDto';
 
 @Controller('follower')
 @UseGuards(AuthGuard)
-export class FollowerController {
+export class FollowingController {
   constructor(
-    private readonly followerService: FollowerService,
+    private readonly followingService: FollowingService,
     private jwtService: JwtService,
   ) {}
 
   @Post('/create')
-  async createFollower(@Body() createFollowerDto: CreateFollower) {
+  async createFollower(@Body() createFollowingDto: CreateFollowing) {
     try {
-      return await this.followerService.followUser(createFollowerDto);
+      return await this.followingService.create(createFollowingDto);
     } catch (err) {
       throw new HttpException(err, 400);
     }
@@ -33,7 +33,7 @@ export class FollowerController {
   @Get('/list/:user_id')
   async ListFollowers(@Param('user_id') user_id: string) {
     try {
-      return await this.followerService.listFollower(user_id);
+      return await this.followingService.findUserFollowings(user_id);
     } catch (err) {
       throw new HttpException(err, 400);
     }
@@ -42,7 +42,7 @@ export class FollowerController {
   @Delete('/remove/:user_id')
   async removeFollower(@Param('user_id') user_id: string) {
     try {
-      return await this.followerService.removeFollower(user_id);
+      return await this.followingService.followingDelete(user_id);
     } catch (err) {
       throw new HttpException(err, 400);
     }

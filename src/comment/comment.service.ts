@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CommentDocument } from './schemas/comment.schema';
+import { Comment, CommentDocument } from './schemas/comment.schema';
 import { CreateCommentDto } from './dto/createCommentDto';
 import { UpdateCommentDto } from './dto/updateCommentDto';
 

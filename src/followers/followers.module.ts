@@ -4,6 +4,7 @@ import { FollowerService } from './followers.service';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Follower, FollowerSchema } from './schemas/followers.schemas';
+import { FollowerController } from './followers.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { Follower, FollowerSchema } from './schemas/followers.schemas';
       },
     ]),
   ],
-  controllers: [],
+  controllers: [FollowerController],
   providers: [FollowerRepository, FollowerService],
 })
 export class FollowerModule {}

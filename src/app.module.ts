@@ -7,6 +7,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { PostModule } from './post/post.module';
 import { LikeModule } from './likes/like.module';
+import { FollowerModule } from './followers/followers.module';
+import { CommentModule } from './comment/comment.module';
+import { FollowingModule } from './following/following.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { LikeModule } from './likes/like.module';
     UsersModule,
     PostModule,
     LikeModule,
+    FollowerModule,
+    FollowingModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
