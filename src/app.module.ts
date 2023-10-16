@@ -10,6 +10,7 @@ import { LikeModule } from './likes/like.module';
 import { FollowerModule } from './followers/followers.module';
 import { CommentModule } from './comment/comment.module';
 import { FollowingModule } from './following/following.module';
+import { FeedModule } from './feed/feed.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FollowingModule } from './following/following.module';
     FollowerModule,
     FollowingModule,
     CommentModule,
+    FeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
