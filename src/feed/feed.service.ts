@@ -17,7 +17,7 @@ export class FeedService {
     const pipeline: any = [
       {
         $match: {
-          user_id: String(user_id),
+          user_id: user_id,
         },
       },
       {
@@ -25,35 +25,65 @@ export class FeedService {
           from: 'likes',
           localField: 'post_id',
           foreignField: 'post_id',
-          as: 'post_likes',
+          as: 'post_like',
         },
       },
       {
         $lookup: {
           from: 'comments',
           localField: 'post_id',
-          foriegnField: 'post_id',
-          as: 'post_comments',
+          foreignField: 'post_id',
+          as: 'post_comment',
         },
       },
       {
         $project: {
-          _id: 0,
+          _id: 1,
+          post_id: 1,
           user_id: 1,
           caption: 1,
-          post_url: 1,
           location: 1,
-          post_id: 1,
           Key: 1,
-          Bucket: 1,
-          'post_likes.user_id': 1,
-          'post_comments.user_id': 1,
-          'post_comments.comment': 1,
-          'post_comments.like': 1,
-          'post_comments.replay': 1,
+          noOfLikes: { $size: '$post_like' },
+          noOfComments: { $size: '$post_comment' },
         },
       },
     ];
+
+    return await this.postModel.aggregate(pipeline);
+  }
+
+  async listPostLikes(post_id: string) {
+    const pipeline = [
+      {
+        $match: {
+          post_id: post_id,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'like_users',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          'like_users.username': 1,
+          'like_users.bio': 1,
+          'like_users._id': 1,
+          'like_users.profile_picture_url': 1,
+        },
+      },
+    ];
+
+    return await this.likeModel.aggregate(pipeline);
+  }
+
+  async listPostComments(post_id: string) {
+    const pipeline = [];
 
     return await this.postModel.aggregate(pipeline);
   }

@@ -13,4 +13,22 @@ export class FeedController {
       throw new HttpException(err, 400);
     }
   }
+
+  @Get('/post/likes/:post_id')
+  async getPostLikes(@Param('post_id') post_id: string) {
+    try {
+      return await this.feedService.listPostLikes(post_id);
+    } catch (err) {
+      throw new HttpException(err, 400);
+    }
+  }
+
+  @Get('/post/comments/:post_id')
+  async getPostComments(@Param('post_id') post_id: string) {
+    try {
+      return await this.feedService.listPostComments(post_id);
+    } catch (err) {
+      throw new HttpException(err, 400);
+    }
+  }
 }
