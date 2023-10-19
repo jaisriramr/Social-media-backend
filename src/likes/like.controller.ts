@@ -11,6 +11,7 @@ import {
 import { AuthGuard } from 'src/auth/auth.guard';
 import { LikeRespository } from './like.repository';
 import { CreateLikeDto } from './dto/createLikeDto';
+import { Types } from 'mongoose';
 
 @Controller('like')
 export class LikeController {
@@ -19,6 +20,8 @@ export class LikeController {
   @Post('/create')
   async create(@Body() createLikeDto: CreateLikeDto) {
     try {
+      createLikeDto.user_id = new Types.ObjectId(createLikeDto.user_id);
+
       return await this.LikeService.create(createLikeDto);
     } catch (err) {
       throw new HttpException(err, 500);

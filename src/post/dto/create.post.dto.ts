@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreatePostDto {
   @ApiProperty()
   @IsNotEmpty()
-  user_id: string;
+  user_id: Types.ObjectId;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -17,4 +18,11 @@ export class CreatePostDto {
   @ApiProperty()
   @IsNotEmpty()
   post_url: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  type: string;
+
+  @ApiProperty()
+  location: string;
 }

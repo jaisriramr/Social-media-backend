@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreatePostDto } from './dto/create.post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { nanoid } from 'nanoid';
+import { Types } from 'mongoose';
 
 @Controller('post')
 export class PostController {
@@ -29,18 +30,25 @@ export class PostController {
     @UploadedFile() file: any,
   ) {
     try {
+      console.log('DDDD ', createPostDto, file);
+
       const post_id = await nanoid(11);
       const postResponse = await this.postService.UploadFile(file);
+      console.log('CREATE ', postResponse);
+
+      createPostDto.user_id = new Types.ObjectId(createPostDto.user_id);
 
       Object.assign(createPostDto, {
         post_id,
         post_url: postResponse.Location,
         Key: postResponse.Key,
         Bucket: postResponse.Bucket,
+        type: file.mimetype,
       });
 
       return this.postService.createPost(createPostDto);
     } catch (err) {
+      console.log('EEEE ', err);
       throw new HttpException(err, 400);
     }
   }

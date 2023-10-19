@@ -3,6 +3,7 @@ import { CreatePostDto } from './dto/create.post.dto';
 import { HttpException, Injectable } from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import * as AWS from 'aws-sdk';
+import * as sharp from 'sharp';
 
 @Injectable()
 export class PostService {
@@ -54,23 +55,28 @@ export class PostService {
   }
 
   async UploadFile(file: any) {
-    console.log(file);
     const { originalname } = file;
 
-    return await this.s3_upload(
-      file.buffer,
-      this.Bucket,
-      originalname,
-      file.mimetype,
-    );
+    return await this.s3_upload(file, this.Bucket, originalname, file.mimetype);
   }
 
   async s3_upload(file, bucket, name, mimetype) {
+    let data;
+    if (mimetype !== 'video/mp4') {
+      data = await sharp(file.buffer)
+        .resize({ fit: 'inside', width: 1080, height: 1080 })
+        .toBuffer();
+    } else {
+      data = file.buffer;
+    }
+
+    console.log('ddddd', data);
+
     const params = {
       Bucket: bucket,
       Key: String(name),
-      Body: file,
-      ACL: 'public-read',
+      Body: data,
+      ACL: 'private',
       ContentType: mimetype,
       ContentDisposition: 'inline',
       CreateBucketConfiguration: {

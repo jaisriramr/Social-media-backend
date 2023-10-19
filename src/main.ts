@@ -1,9 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cors from 'cors';
+import * as dotenv from 'dotenv';
+import { json, urlencoded } from 'express';
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(json({ limit: '1mb' }));
+  app.use(urlencoded({ limit: '1mb', extended: true }));
+  app.use(cors());
+
   // Swagger documentation setup
   const config = new DocumentBuilder()
     .setTitle('SM Dev Backend')

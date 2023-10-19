@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PipelineStage } from 'mongoose';
+import { Model, PipelineStage, Types } from 'mongoose';
 import { Comment, CommentDocument } from 'src/comment/schemas/comment.schema';
 import { Like, LikeDocument } from 'src/likes/schema/like.schema';
 import { Post, PostDocument } from 'src/post/schema/post.schema';
@@ -17,7 +17,26 @@ export class FeedService {
     const pipeline: any = [
       {
         $match: {
-          user_id: user_id,
+          user_id: new Types.ObjectId(user_id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'likes',
+          as: 'user_liked',
+          let: { post_id: '$post_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$post_id', '$$post_id'] },
+                    { $eq: ['$user_id', new Types.ObjectId(user_id)] },
+                  ],
+                },
+              },
+            },
+          ],
         },
       },
       {
@@ -37,13 +56,25 @@ export class FeedService {
         },
       },
       {
+        $lookup: {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'post_user',
+        },
+      },
+      {
         $project: {
           _id: 1,
           post_id: 1,
           user_id: 1,
           caption: 1,
           location: 1,
-          Key: 1,
+          post_url: 1,
+          user_liked: 1,
+          type: 1,
+          'post_user.username': 1,
+          'post_user.profile_picture_url': 1,
           noOfLikes: { $size: '$post_like' },
           noOfComments: { $size: '$post_comment' },
         },
@@ -72,7 +103,7 @@ export class FeedService {
         $project: {
           _id: 1,
           'like_users.username': 1,
-          'like_users.bio': 1,
+          'like_users.fullname': 1,
           'like_users._id': 1,
           'like_users.profile_picture_url': 1,
         },
